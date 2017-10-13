@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SESION2</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="css/estilos.css">
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
+	<script src="js/funciones.js"></script>
+</head>
+
+<body>
+
+	<nav>
+		<i class="fa fa-angle-left" aria-hidden="true" onclick="navegar('tablero.html')"></i>
+		<h1>Nuevo Lugar</h1>
+	</nav>
+
+	<section>
+
+		<div id="mapa"></div>
+
+		<div class="ficha">
+			<input type="text" placeholder="Nombre del Lugar" id="nombre" disabled>
+			<input type="number" placeholder="Precio" id="precio" disabled>
+			<textarea placeholder="¿Que hay en éste lugar?" id="descripcion" disabled></textarea>
+			<input type="text" placeholder="¿Que tipo de lugar es?" id="categoria" disabled>
+		</div>
+		
+	</section>
+
+</body>
+
+
+<script>
+	
+		//Evento, Función, Burbujas de JS
+	window.addEventListener('load', cargarLugares, true);
+
+	function cargarLugares(){
+		lugares = new XMLHttpRequest();
+		id = localStorage.getItem('idTablero');
+		lugares.open('GET', 'php/datoslugares.php?='+id);
+		lugares.send();
+		lugares.onreadystatechange = function(){
+			if(lugares.readyState == 4 && lugares.status == 200){
+				//Imprimir lugares
+				JSONLugares = JSON.parse(lugares.responseText);
+				document.getElementById('nombre').value = JASONLugares[0].nombre;
+				document.getElementById('precio').value = JASONLugares[0].precio;
+				document.getElementById('descripcion').value = JASONLugares[0].descripcion;
+				document.getElementById('categoria').value = JASONLugares[0].categoria;
+				mapaJSON(JSONLugares[0].latitud, JSONLugares[0].longitud);
+
+			}
+		}
+	}	
+
+function mapaJSON(lat, long) {
+	var miLugar = {lat: parseFloat(lat), lng: parseFloat(long)};
+	var miMapa = new google.maps.Map(document.getElementById('mapa'), {
+		zoom: 18,
+		streetViewControl:false,
+		fullscreenControl:false,
+		mapTypeControl:false,
+		zoomControl:false,
+		center: miLugar
+	});
+
+	var miMarcador = new google.maps.Marker({
+		position:miLugar,
+		draggable:true,
+		animation:google.maps.Animation.DROP,
+		map: miMapa
+	});
+}
+</script>
+ <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxOF5NTSL_RMdLT9SmhxcTv_m59RgISPo">
+    </script>
+</html>
